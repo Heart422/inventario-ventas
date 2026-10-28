@@ -107,15 +107,51 @@
 
       .product-image {
         display: grid;
+        width: 100%;
         height: 185px;
         place-items: center;
         overflow: hidden;
+        padding: 0;
+        border: 0;
         background: #edf4ff;
         color: var(--muted);
         font-size: 2rem;
       }
 
       .product-image img { width: 100%; height: 100%; object-fit: cover; }
+      .image-preview-button { display: grid; }
+      .image-preview-button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+      .image-preview-dialog {
+        width: min(94vw, 1000px);
+        max-width: none;
+        max-height: 94vh;
+        padding: 16px;
+        border: 0;
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+      .image-preview-dialog::backdrop { background: rgba(15, 23, 42, 0.82); }
+      .image-preview-close {
+        display: block;
+        min-width: 44px;
+        min-height: 44px;
+        margin: 0 0 10px auto;
+        border: 0;
+        border-radius: 10px;
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .image-preview-dialog img {
+        display: block;
+        width: 100%;
+        max-height: calc(94vh - 92px);
+        object-fit: contain;
+      }
+      .image-preview-dialog p { margin: 10px 0 0; text-align: center; overflow-wrap: anywhere; }
       .product-body { padding: 15px; }
       .product-body h2,
       .product-body p { overflow-wrap: anywhere; }
@@ -281,6 +317,12 @@
       </section>
     </main>
 
+    <dialog id="imagePreviewDialog" class="image-preview-dialog" aria-labelledby="imagePreviewCaption">
+      <button id="imagePreviewClose" class="image-preview-close" type="button" aria-label="Cerrar imagen ampliada">×</button>
+      <img id="imagePreview" alt="" />
+      <p id="imagePreviewCaption"></p>
+    </dialog>
+
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
       import { getDatabase, onValue, ref, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
@@ -306,6 +348,9 @@
         checkoutForm: document.getElementById('checkoutForm'),
         customerName: document.getElementById('customerName'),
         submitButton: document.getElementById('submitButton'),
+        imagePreviewDialog: document.getElementById('imagePreviewDialog'),
+        imagePreview: document.getElementById('imagePreview'),
+        imagePreviewCaption: document.getElementById('imagePreviewCaption'),
       };
 
       function escapeHtml(value) {
@@ -344,11 +389,11 @@
           const description = [product.design, product.color].filter(Boolean).join(' · ');
           return `
             <article class="product-card">
-              <div class="product-image">
-                ${product.photoUrl
-                  ? `<img src="${escapeHtml(product.photoUrl)}" alt="${escapeHtml(product.name || 'Producto')}" />`
-                  : '<span aria-hidden="true">📷</span>'}
-              </div>
+              ${product.photoUrl
+                ? `<button class="product-image image-preview-button" data-preview-image="${escapeHtml(product.photoUrl)}" data-preview-alt="${escapeHtml(product.name || 'Producto')}" type="button" aria-label="Ver imagen completa de ${escapeHtml(product.name || 'Producto')}">
+                    <img src="${escapeHtml(product.photoUrl)}" alt="${escapeHtml(product.name || 'Producto')}" />
+                  </button>`
+                : '<div class="product-image"><span aria-hidden="true">📷</span></div>'}
               <div class="product-body">
                 <span class="reference">${escapeHtml(product.reference || 'Sin referencia')}</span>
                 <h2>${escapeHtml(product.name || 'Producto')}</h2>
@@ -396,6 +441,17 @@
       });
 
       document.body.addEventListener('click', (event) => {
+        const previewButton = event.target.closest('[data-preview-image]');
+        if (previewButton) {
+          const imageUrl = previewButton.dataset.previewImage;
+          const imageAlt = previewButton.dataset.previewAlt || 'Imagen del producto';
+          elements.imagePreview.src = imageUrl;
+          elements.imagePreview.alt = imageAlt;
+          elements.imagePreviewCaption.textContent = imageAlt;
+          elements.imagePreviewDialog.showModal();
+          return;
+        }
+
         const addButton = event.target.closest('[data-add]');
         if (addButton) {
           const productId = addButton.dataset.add;
@@ -420,6 +476,16 @@
           delete state.cart[removeButton.dataset.remove];
           renderProducts();
           renderCart();
+        }
+      });
+
+      document.getElementById('imagePreviewClose').addEventListener('click', () => {
+        elements.imagePreviewDialog.close();
+      });
+
+      elements.imagePreviewDialog.addEventListener('click', (event) => {
+        if (event.target === elements.imagePreviewDialog) {
+          elements.imagePreviewDialog.close();
         }
       });
 
