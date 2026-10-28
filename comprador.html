@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#183b7a" />
+    <title>Tienda - Ventas</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #183b7a;
+        --primary-light: #edf3ff;
+        --accent: #20b26b;
+        --text: #172033;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --surface: #fff;
+        --background: #f4f7fb;
+        --danger: #c0392b;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+      button:disabled { cursor: not-allowed; opacity: 0.55; }
+
+      .topbar {
+        padding: 22px max(20px, calc((100% - 1120px) / 2));
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        justify-content: space-between;
+      }
+
+      .brand-info { display: flex; align-items: center; gap: 14px; }
+      .brand-mark {
+        display: grid;
+        width: 46px;
+        height: 46px;
+        place-items: center;
+        border-radius: 14px;
+        background: var(--primary);
+        color: white;
+        font-size: 1.3rem;
+        font-weight: 800;
+      }
+
+      h1, h2, h3, p { margin-top: 0; }
+      h1 { margin-bottom: 4px; font-size: 1.35rem; }
+      h2 { margin-bottom: 6px; font-size: 1.2rem; }
+      .muted { color: var(--muted); }
+      .brand p { margin: 0; }
+      .seller-link { color: var(--primary); font-weight: 700; text-decoration: none; }
+      .seller-link:hover { text-decoration: underline; }
+
+      main {
+        width: min(1120px, calc(100% - 32px));
+        margin: 28px auto 56px;
+      }
+
+      .intro {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .intro p { margin-bottom: 0; }
+
+      .button {
+        min-height: 42px;
+        padding: 10px 15px;
+        border: 0;
+        border-radius: 11px;
+        font-weight: 700;
+      }
+
+      .primary-button { background: var(--primary); color: white; }
+      .secondary-button { background: var(--primary-light); color: var(--primary); }
+      .danger-button { background: #fff1f0; color: var(--danger); }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+        gap: 16px;
+      }
+
+      .product-card {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(16, 24, 40, 0.05);
+      }
+
+      .product-image {
+        display: grid;
+        height: 185px;
+        place-items: center;
+        overflow: hidden;
+        background: #edf4ff;
+        color: var(--muted);
+        font-size: 2rem;
+      }
+
+      .product-image img { width: 100%; height: 100%; object-fit: cover; }
+      .product-body { padding: 15px; }
+      .product-body h2,
+      .product-body p { overflow-wrap: anywhere; }
+
+      .reference {
+        display: inline-block;
+        margin-bottom: 9px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .product-body h2 { margin-bottom: 5px; }
+      .product-body p { margin-bottom: 9px; }
+      .availability { color: #0f7d4b; font-weight: 700; }
+
+      .quantity-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-top: 14px;
+      }
+
+      .quantity-row input {
+        width: 82px;
+        flex: 0 0 82px;
+        min-height: 42px;
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+
+      .panel {
+        margin-top: 24px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(16, 24, 40, 0.04);
+      }
+
+      .panel > p { margin-bottom: 0; }
+      .cart-list { display: grid; gap: 10px; margin: 15px 0; }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: #f7f9fc;
+      }
+
+      .cart-item p { margin: 4px 0 0; }
+      .checkout {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto;
+        align-items: end;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .field { display: grid; gap: 7px; }
+      .field label { font-weight: 700; }
+      .field input {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+
+      .empty-state, .message {
+        padding: 16px;
+        border-radius: 12px;
+        background: #f7f9fc;
+        color: var(--muted);
+      }
+
+      .message { display: none; margin-bottom: 16px; }
+      .message.show { display: block; }
+      .message.error { background: #fff1f0; color: var(--danger); }
+      .message.success { background: #eaf8f0; color: #0f7d4b; }
+
+      @media (max-width: 600px) {
+        .topbar { padding: 16px; }
+        .seller-link { font-size: 0.9rem; }
+        main { width: min(100% - 24px, 1120px); margin-top: 20px; }
+        .brand { align-items: flex-start; gap: 10px; }
+        .brand-info { min-width: 0; gap: 10px; }
+        .brand-mark { flex: 0 0 42px; width: 42px; height: 42px; }
+        .intro { align-items: stretch; flex-direction: column; gap: 12px; }
+        .intro > button { width: 100%; }
+        .product-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+        .product-image { height: 210px; }
+        .product-body { padding: 14px; }
+        .quantity-row { align-items: stretch; }
+        .quantity-row input { min-height: 46px; }
+        .quantity-row button { flex: 1; min-height: 46px; }
+        .checkout { grid-template-columns: 1fr; }
+        .checkout button { width: 100%; }
+        .panel { padding: 16px; }
+        .cart-item { align-items: flex-start; }
+        .cart-item > div { min-width: 0; overflow-wrap: anywhere; }
+        .cart-item button { flex: 0 0 auto; min-height: 42px; }
+        .field input { font-size: 16px; }
+      }
+
+      @media (max-width: 360px) {
+        .topbar { padding: 12px; }
+        .brand { flex-direction: column; }
+        main { width: calc(100% - 20px); }
+        .panel { padding: 13px; }
+        .product-image { height: 180px; }
+        .cart-item { flex-direction: column; }
+        .cart-item button { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-info">
+          <div class="brand-mark" aria-hidden="true">V</div>
+          <div>
+            <h1>Tienda</h1>
+            <p class="muted">Productos disponibles para comprar</p>
+          </div>
+        </div>
+        <a class="seller-link" href="index.html">Vista vendedores</a>
+      </div>
+    </header>
+
+    <main>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <section aria-labelledby="catalogTitle">
+        <div class="intro">
+          <div>
+            <h2 id="catalogTitle">Catálogo</h2>
+            <p class="muted">Agrega productos al carrito y envía tu precompra.</p>
+          </div>
+          <button id="cartJump" class="button secondary-button" type="button">Carrito (<span id="cartCount">0</span>)</button>
+        </div>
+        <div id="productGrid" class="product-grid">
+          <div class="empty-state">Cargando productos…</div>
+        </div>
+      </section>
+
+      <section id="cartSection" class="panel" aria-labelledby="cartTitle">
+        <h2 id="cartTitle">Mi carrito</h2>
+        <p class="muted">La compra queda pendiente hasta que un vendedor la apruebe.</p>
+        <div id="cartList" class="cart-list"></div>
+        <form id="checkoutForm" class="checkout">
+          <div class="field">
+            <label for="customerName">Tu nombre</label>
+            <input id="customerName" type="text" maxlength="80" autocomplete="name" placeholder="Escribe tu nombre" required />
+          </div>
+          <button id="submitButton" class="button primary-button" type="submit" disabled>Enviar precompra</button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+      import { getDatabase, onValue, ref, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+      const firebaseConfig = {
+        apiKey: 'AIzaSyByJSqNEMNGNvGNyrwgv1KqVNnuTrO5oeQ',
+        databaseURL: 'https://ventas-f29bf-default-rtdb.firebaseio.com',
+        projectId: 'ventas-f29bf',
+        storageBucket: 'ventas-f29bf.firebasestorage.app',
+        messagingSenderId: '359784278140',
+        appId: '1:359784278140:web:c3dd009ead7fdfa2d741f9',
+        measurementId: 'G-GQKW7WWE0J',
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+      const state = { products: {}, cart: {} };
+      const elements = {
+        message: document.getElementById('message'),
+        productGrid: document.getElementById('productGrid'),
+        cartCount: document.getElementById('cartCount'),
+        cartList: document.getElementById('cartList'),
+        checkoutForm: document.getElementById('checkoutForm'),
+        customerName: document.getElementById('customerName'),
+        submitButton: document.getElementById('submitButton'),
+      };
+
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+        })[character]);
+      }
+
+      function getAvailable(product) {
+        return Math.max(Number(product.stock || 0) - Number(product.reserved || 0), 0);
+      }
+
+      function showMessage(text, type = 'success') {
+        elements.message.textContent = text;
+        elements.message.className = `message show ${type}`;
+      }
+
+      function renderProducts() {
+        const products = Object.entries(state.products)
+          .filter(([, product]) => product?.active !== false && getAvailable(product) > 0)
+          .sort(([, first], [, second]) => (first.reference || '').localeCompare(second.reference || ''));
+
+        if (!products.length) {
+          elements.productGrid.innerHTML = '<div class="empty-state">Por ahora no hay productos disponibles.</div>';
+          return;
+        }
+
+        elements.productGrid.innerHTML = products.map(([productId, product]) => {
+          const available = getAvailable(product);
+          const inCart = Number(state.cart[productId] || 0);
+          const canAdd = Math.max(available - inCart, 0);
+          const description = [product.design, product.color].filter(Boolean).join(' · ');
+          return `
+            <article class="product-card">
+              <div class="product-image">
+                ${product.photoUrl
+                  ? `<img src="${escapeHtml(product.photoUrl)}" alt="${escapeHtml(product.name || 'Producto')}" />`
+                  : '<span aria-hidden="true">📷</span>'}
+              </div>
+              <div class="product-body">
+                <span class="reference">${escapeHtml(product.reference || 'Sin referencia')}</span>
+                <h2>${escapeHtml(product.name || 'Producto')}</h2>
+                ${description ? `<p class="muted">${escapeHtml(description)}</p>` : ''}
+                ${product.description ? `<p class="muted">${escapeHtml(product.description)}</p>` : ''}
+                <p class="availability">${available} disponibles</p>
+                <div class="quantity-row">
+                  <input aria-label="Cantidad de ${escapeHtml(product.name || 'producto')}" data-quantity="${escapeHtml(productId)}" type="number" min="1" max="${canAdd}" step="1" value="1" ${canAdd < 1 ? 'disabled' : ''} />
+                  <button class="button primary-button" data-add="${escapeHtml(productId)}" type="button" ${canAdd < 1 ? 'disabled' : ''}>
+                    ${canAdd < 1 ? 'En carrito' : 'Agregar'}
+                  </button>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      function renderCart() {
+        const entries = Object.entries(state.cart);
+        const total = entries.reduce((sum, [, quantity]) => sum + Number(quantity), 0);
+        elements.cartCount.textContent = total;
+        elements.submitButton.disabled = entries.length === 0;
+        if (!entries.length) {
+          elements.cartList.innerHTML = '<div class="empty-state">Tu carrito está vacío.</div>';
+          return;
+        }
+
+        elements.cartList.innerHTML = entries.map(([productId, quantity]) => {
+          const product = state.products[productId];
+          return `
+            <div class="cart-item">
+              <div>
+                <strong>${escapeHtml(product?.name || 'Producto no disponible')}</strong>
+                <p class="muted">${escapeHtml(product?.reference || 'Sin referencia')} · ${Number(quantity)} unidad(es)</p>
+              </div>
+              <button class="button danger-button" data-remove="${escapeHtml(productId)}" type="button">Quitar</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('cartJump').addEventListener('click', () => {
+        document.getElementById('cartSection').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      document.body.addEventListener('click', (event) => {
+        const addButton = event.target.closest('[data-add]');
+        if (addButton) {
+          const productId = addButton.dataset.add;
+          const product = state.products[productId];
+          const quantityInput = [...document.querySelectorAll('[data-quantity]')]
+            .find((input) => input.dataset.quantity === productId);
+          const quantity = Number(quantityInput?.value || 0);
+          const remaining = product ? getAvailable(product) - Number(state.cart[productId] || 0) : 0;
+          if (!product || product.active === false || !Number.isInteger(quantity) || quantity <= 0 || quantity > remaining) {
+            showMessage('Ingresa una cantidad válida dentro de las unidades disponibles.', 'error');
+            return;
+          }
+          state.cart[productId] = Number(state.cart[productId] || 0) + quantity;
+          renderProducts();
+          renderCart();
+          showMessage('Producto agregado al carrito.');
+          return;
+        }
+
+        const removeButton = event.target.closest('[data-remove]');
+        if (removeButton) {
+          delete state.cart[removeButton.dataset.remove];
+          renderProducts();
+          renderCart();
+        }
+      });
+
+      elements.checkoutForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const customerName = elements.customerName.value.trim();
+        const entries = Object.entries(state.cart);
+        if (!customerName || !entries.length) {
+          showMessage('Escribe tu nombre y agrega productos al carrito.', 'error');
+          return;
+        }
+
+        const unavailable = entries.find(([productId, quantity]) => {
+          const product = state.products[productId];
+          return !product || product.active === false || Number(quantity) > getAvailable(product);
+        });
+        if (unavailable) {
+          showMessage('La disponibilidad cambió. Revisa las cantidades del carrito e inténtalo de nuevo.', 'error');
+          return;
+        }
+
+        const orderId = `order_${crypto.randomUUID()}`;
+        const createdAt = new Date().toISOString();
+        const updates = {};
+        entries.forEach(([productId, quantity]) => {
+          const product = state.products[productId];
+          const requestId = `request_${crypto.randomUUID()}`;
+          updates[`products/${productId}/purchaseRequests/${requestId}`] = {
+            id: requestId,
+            orderId,
+            productId,
+            productReference: product.reference || '',
+            productName: product.name || '',
+            customerName,
+            quantity: Number(quantity),
+            status: 'pending',
+            createdAt,
+          };
+        });
+
+        elements.submitButton.disabled = true;
+        try {
+          await update(ref(db), updates);
+          state.cart = {};
+          elements.checkoutForm.reset();
+          renderProducts();
+          renderCart();
+          showMessage('Precompra enviada. Queda pendiente de aprobación del vendedor.');
+        } catch (error) {
+          showMessage(`No se pudo enviar la precompra: ${error.message}`, 'error');
+        } finally {
+          elements.submitButton.disabled = Object.keys(state.cart).length === 0;
+        }
+      });
+
+      onValue(ref(db, 'products'), (snapshot) => {
+        state.products = snapshot.val() || {};
+        renderProducts();
+        renderCart();
+      }, (error) => {
+        elements.productGrid.innerHTML = '';
+        showMessage(`No se pudo cargar el catálogo: ${error.message}`, 'error');
+      });
+    </script>
+  </body>
+</html>
