@@ -962,8 +962,9 @@
               <small class="muted">JPG, PNG o WebP; máximo 5 MB. En celular podrás elegir una foto de la galería.</small>
             </div>
             <div class="field">
-              <label for="editorPhoto">O pega una URL de imagen</label>
-              <input id="editorPhoto" type="url" placeholder="https://..." />
+              <label for="editorPhoto">Ruta de imagen publicada en el sitio</label>
+              <input id="editorPhoto" type="text" placeholder="./product-photos/nombre-de-imagen.jpg" />
+              <small class="muted">Usa la ruta relativa de una imagen incluida en Git; publica también la carpeta product-photos.</small>
             </div>
             <div class="field full-span">
               <img id="editorPhotoPreview" class="hidden" alt="Vista previa de la fotografía del producto" style="max-width:180px;max-height:160px;object-fit:contain;border-radius:12px;border:1px solid var(--border);" />
